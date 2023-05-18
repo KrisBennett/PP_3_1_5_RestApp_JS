@@ -15,20 +15,20 @@ function getTableUser() {
             js.forEach(item => {
                 const users = `$(
                     <tr>
-                        <td class="pt-3" id="userID">${item.id}</td>
-                        <td class="pt-3" >${item.name}</td>
-                        <td class="pt-3" >${item.surname}</td>
-                        <td class="pt-3" >${item.age}</td>
-                        <td class="pt-3" >${item.email}</td>
-                        <td class="pt-3" >${item.roleToString}</td>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.surname}</td>
+                        <td>${item.age}</td>
+                        <td>${item.email}</td>
+                        <td>${item.roleToString}</td>
                         <td>
-                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" 
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
                             data-target="#edit" onclick="editModal(${item.id})">
                             Edit
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
                             data-target="#delete" onclick="deleteModal(${item.id})">
                                 Delete
                             </button>
@@ -46,7 +46,25 @@ async function getOneUser(id) {
     return await response.json();
 }
 
-async function openAndFillInTheModal(form, modal, id) {
+async function openAndFillInTheEditModal(form, modal, id) {
+    modal.show();
+    let user = await getOneUser(id);
+    form.id.value = user.id;
+    form.name.value = user.name;
+    form.surname.value = user.surname;
+    form.age.value = user.age;
+    form.email.value = user.email;
+    form.password.value = user.password;
+    form.roles.value = user.roles;
+
+    let roleCurrent = user.roleToString;
+
+    $("#rolesEdit option").filter(function() {
+        return roleCurrent.indexOf($(this).text()) !== -1;
+    }).prop('selected', true);
+}
+
+async function openAndFillInTheDeleteModal(form, modal, id) {
     modal.show();
     let user = await getOneUser(id);
     form.id.value = user.id;
@@ -55,6 +73,13 @@ async function openAndFillInTheModal(form, modal, id) {
     form.age.value = user.age;
     form.email.value = user.email;
     form.roles.value = user.roles;
+
+    let roleCurrent = user.roleToString;
+    console.log(roleCurrent);
+
+    $("#rolesDelete option").filter(function() {
+        return roleCurrent.indexOf($(this).text()) !== -1;
+    }).prop('selected', true);
 }
 
 //editModal
@@ -63,19 +88,29 @@ editUser();
 
 async function editModal(id) {
     const modal = new bootstrap.Modal(document.querySelector('#edit'));
-    await openAndFillInTheModal(formEdit, modal, id);
+    await openAndFillInTheEditModal(formEdit, modal, id);
 }
 
 function editUser() {
     formEdit.addEventListener("submit", event => {
         event.preventDefault();
-        let roles = [];
 
-        for (let i = 0; i < formEdit.roles.options.length; i++) {
-            if (formEdit.roles.options[i].selected) {
-                let roleTmp = {}
-                roleTmp["id"] = formEdit.roles.options[i].value;
-                roles.push(roleTmp)
+        let roles = $("#rolesEdit").val()
+
+        for (let i = 0; i < roles.length; i++) {
+            if (roles[i] === 'ROLE_ADMIN') {
+                roles[i] = {
+                    'id': 1,
+                    'role': 'ROLE_ADMIN',
+                    "authority": "ROLE_ADMIN"
+                }
+            }
+            if (roles[i] === 'ROLE_USER') {
+                roles[i] = {
+                    'id': 2,
+                    'role': 'ROLE_USER',
+                    "authority": "ROLE_USER"
+                }
             }
         }
 
@@ -103,19 +138,11 @@ function editUser() {
 
 //deleteModal
 let deleteForm = document.forms["formDelete"]
+deleteUser()
 
 async function deleteModal(id) {
     const modal = new bootstrap.Modal(document.querySelector('#delete'));
-    await openAndFillInTheModal(deleteForm, modal, id);
-    switch (deleteForm.roles.value) {
-        case '1':
-            deleteForm.roles.value = 'ADMIN';
-            break;
-        case '2':
-            deleteForm.roles.value = 'USER';
-            break;
-    }
-    deleteUser()
+    await openAndFillInTheDeleteModal(deleteForm, modal, id);
 }
 
 function deleteUser() {

@@ -1,7 +1,7 @@
 'use strict';
 
 function showCurrentUser() {
-    $.get(`/api/user/`, function (data) {
+    $.get(`/api/user`, function (data) {
 
         let userTbody =
             "<tr><td>" + data.id + "</td>" +
@@ -16,14 +16,14 @@ function showCurrentUser() {
 }
 
 function currentEmail() {
-    $.get(`/api/user/`, function (data) {
+    $.get(`/api/user`, function (data) {
         let authUserEmail = data.email;
         $("#currentUserEmail").html(authUserEmail);
     })
 }
 
 function currentRoles() {
-    $.get(`/api/user/`, function (data) {
+    $.get(`/api/user`, function (data) {
 
         let authUserRoles = data.roleToString;
         $("#currentUserRoles").html(authUserRoles);

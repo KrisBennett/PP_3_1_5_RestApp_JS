@@ -101,15 +101,16 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="passwordEdit"><b>Password</b></label>
-                                                        <input type="text" class="form-control"
-                                                               id="passwordEdit" name="password"/>
+                                                        <input type="password" class="form-control"
+                                                               id="passwordEdit" name="password"
+                                                               autocomplete="off"/>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="rolesEdit"><b>Role</b></label>
                                                         <select multiple class="form-control" size="2"
-                                                                id="rolesEdit" name="roles" required>
-                                                            <option value="1">USER</option>
-                                                            <option value="2">ADMIN</option>
+                                                                id="rolesEdit" name="roles" autocomplete="off">
+                                                            <option value="ROLE_ADMIN">ADMIN</option>
+                                                            <option value="ROLE_USER">USER</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -179,9 +180,10 @@
                                                             <div class="form-group">
                                                                 <label for="rolesDelete"><b>Role</b></label>
                                                                 <select multiple class="form-control" size="2"
-                                                                        id="rolesDelete" name="roles" disabled>
-                                                                    <option value="1">USER</option>
-                                                                    <option value="2">ADMIN</option>
+                                                                        id="rolesDelete" name="roles" disabled
+                                                                        autocomplete="off">
+                                                                    <option value="ROLE_ADMIN">ADMIN</option>
+                                                                    <option value="ROLE_USER">USER</option>
                                                                 </select>
                                                             </div>
                                                             <div class="modal-footer">
@@ -215,7 +217,7 @@
                             <div class="d-flex justify-content-center align-items-center">
                                 <div class="col-5 text-center">
                                     <br>
-                                    <form id="new">
+                                    <form id="new" name="newUserForm">
                                         <div class="form-group">
                                             <label for="nameNew"><b>First Name</b></label>
                                             <input type="text" class="form-control" id="nameNew"
@@ -245,8 +247,8 @@
                                             <label for="rolesNew"><b>Role</b></label>
                                             <select multiple class="form-control" size="2"
                                                     id="rolesNew" name="roles" required>
-                                                <option value="1">USER</option>
-                                                <option value="2">ADMIN</option>
+                                                <option value="1">ADMIN</option>
+                                                <option value="2">USER</option>
                                             </select>
                                         </div>
                                         <button type="submit" class="btn btn-success btn-sm" id="add">

@@ -1,5 +1,6 @@
 package com.example.pp_3_1_5_restapp.service;
 
+import com.example.pp_3_1_5_restapp.exceptions.UserNotFoundException;
 import com.example.pp_3_1_5_restapp.model.User;
 import com.example.pp_3_1_5_restapp.repositories.UserRepository;
 import org.springframework.context.annotation.Lazy;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateUser(User user) {
-        Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
-        if (!BCRYPT_PATTERN.matcher(user.getPassword()).matches()) {
+        User userFromDB = getUserById(user.getId());
+        if (!user.getPassword().equals(userFromDB.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.saveAndFlush(user);
@@ -49,12 +49,15 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    @Override
+    public User getUserById(Long id) throws UserNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id: '%s' not found", id)));
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> findByEmail(String email) throws UserNotFoundException {
+        return Optional.ofNullable(userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with email: '%s' not found", email))));
     }
 }

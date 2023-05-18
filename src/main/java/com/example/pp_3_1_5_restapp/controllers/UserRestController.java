@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,8 +20,8 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @GetMapping()
-    public ResponseEntity<User> getCurrentUser(Principal principal) {
-        return new ResponseEntity<>(userService.findByEmail(principal.getName()).orElse(new User()), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<Optional<User>> getCurrentUser(Principal principal) {
+        return new ResponseEntity<>(userService.findByEmail(principal.getName()), HttpStatus.OK);
     }
 }

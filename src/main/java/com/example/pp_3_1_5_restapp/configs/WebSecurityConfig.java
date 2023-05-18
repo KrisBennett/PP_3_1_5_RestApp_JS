@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 
+/**
+ * Конфигурация web-безопасности
+ */
 @Configuration
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -23,6 +26,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Конфигурация цепочки фильтров Spring Security.
+     * Настройка авторизации.
+     *
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -44,6 +54,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
+    /**
+     * Настройка аутентификации с получением пользователя из БД.
+     *
+     * @param authenticationManagerBuilder
+     * @throws Exception
+     */
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService)
@@ -60,8 +76,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Диалект позволяет отображать контент в представлении на основе ролей пользователей, разрешений
+     * или других выражений безопасности: sec:authorize / sec:authentication.
+     *
+     * @return SpringSecurityDialect()
+     */
     @Bean
     public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();
     }
+
+//    /**
+//     * Хранилище учетных записей пользователей для их аутентификации
+//     * в памяти (inMemory) используя bean-компонент интерфейса
+//     * UserDetailService.
+//     *
+//     * @return InMemoryUserDetailsManager(user)
+//     */
+//    @Bean
+//    @Override
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user =
+//                User.withDefaultPasswordEncoder()
+//                        .username("user")
+//                        .password("user")
+//                        .roles("USER")
+//                        .build();
+//        return new InMemoryUserDetailsManager(user);
+//    }
 }
